@@ -1,0 +1,78 @@
+﻿@model MovieSystem.Web.Models.MovieDetailsViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+
+
+<div class="row-fluid" style="margin-bottom: 20px;">
+    <div class="span4 pull-left">
+        <img src="@Model.PosterUrl" style="margin-right:25px" height="400" width="300">
+    </div>
+    <div class="span8">
+        <h2>@Model.Title ( @Model.Year )</h2>
+        Жанр:<a href="~/Movie/ByGenre?name=@Model.Category">@Model.Category</a><br>
+        Режисьор: @Model.Director<br><br />
+        Описание: @Model.Description
+
+
+    </div>
+    <div class="row span12">
+        <h3>Коментари:</h3>
+        @if (User.Identity.IsAuthenticated)
+        {
+            using (Ajax.BeginForm("PostComment", new AjaxOptions
+            {
+                HttpMethod = "Post",
+                UpdateTargetId = "Comments",
+                InsertionMode = InsertionMode.InsertBefore,
+                OnSuccess = "commentSuccess",
+                OnFailure = "commentFail"
+
+            }))
+            {
+                @Html.Hidden("MovieId", Model.Id);
+            @Html.TextArea("comment", new
+                {
+                    style = "width:100%; max-width: 450px; height:80px",
+                    placeholder = "Напишете своят коментар тук...",
+                    id = "commentContent"
+                });<br />
+                @Html.AntiForgeryToken();
+            <input class="btn btn-primary" type="submit" value="Добави коментар" />
+            }
+        }
+        <div id="Comments">
+            @if (Model.Comments.Count() > 0)
+            {
+                foreach (var comment in Model.Comments)
+                {
+                    @Html.Partial("_CommentPartial", comment)
+                }
+            }
+            else
+            {
+                <div id="noComments" class="well well-sm">
+                    Все още няма коментари за този филм!
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+@section scripts {
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/Scripts/bootbox.js"></script>
+    <script>
+        function commentSuccess() {
+            $("#commentContent").val('');
+            $("#noComments").hide();
+        }
+
+        function commentFail() {
+            bootbox.alert("Въвели сте некоректен коментар!");
+        }
+    </script>
+}

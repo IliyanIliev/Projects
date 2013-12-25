@@ -1,0 +1,33 @@
+﻿@model ICollection<MovieSystem.Web.Models.MovieViewModel>
+@{
+    ViewBag.Title = "By Genre";
+}
+@if (Model.Count > 0)
+{
+    <h2>Резултати от търсенето: </h2>
+    
+    for (int i = 0; i < Model.Count; i++)
+    {
+        var currMovie = Model.ElementAt(i);
+        <div class="row-fluid">
+            <div class="span4">
+                <div style="width: 450px; margin-bottom: 20px;">
+                    <a href="~/Movie/Details?id=@currMovie.Id"><img src="@currMovie.PosterUrl" style="margin-right:15px" height="175" width="152" align="left"></a>
+                    <div>
+                        <div style="padding-top: 10px; height: 165px;">
+                            <div style=" font-size:15px; padding-bottom: 10px;"><b><a href="~/Movie/Details?id=@currMovie.Id">@currMovie.Title</a></b>&nbsp;(@currMovie.Year)</div>
+                            Жанр: <a href="#">@currMovie.Category</a><br>
+                            Режисьор: @currMovie.Director<br><br />
+                            <a href="~/Movie/Details?id=@currMovie.Id" class="btn btn-primary">Виж още</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+}
+else
+{
+    <div class="alert alert-info"><b>Няма намерени филми с такова заглавие!</b></div>
+}
